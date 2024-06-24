@@ -22,16 +22,29 @@ DATA = {
 def helo(request):
     return HttpResponse('Привет, страница пустая')
 
-def recipe(request, dish: str):
-    ## Если есть условие с передачей количества персон не работает "Такого рецепта нет"
-    servings = int(request.GET.get('servings', 1))
-    context = {'recipe': {ingr: quantity * servings for (ingr, quantity) in DATA.get(dish).items()}}
+def recipe(request,dish:str):
+    try:
+        context = {}
+        servings = int(request.GET.get('servings', 1))
+        recep = DATA.get(dish)
+        final_dish = {}
+        for dishs, caunt in recep.items():
+            final_dish[dishs] = caunt * servings
+        context.setdefault('recipe', final_dish)
+        return render(request,'calculator/index.html', context)
+    except:
+        context = {}
+        return render(request, 'calculator/index.html', context)
 
-    return render(request,'calculator/index.html',context)
-    # context = {'recipe': DATA.get(dish)
-    #
-    # }
-    # return render(request,'calculator/index.html',context)
+# def recipe(request, dish: str):
+#     ## Если есть условие с передачей количества персон не работает "Такого рецепта нет"
+#     servings = int(request.GET.get('servings',1))
+#     context = {'recipe': {ingr: quantity * servings for (ingr, quantity) in DATA.get(dish).items()}}
+#
+#     return render(request,'calculator/index.html',context)
+# def non_recipe(request, dish: str):
+#     context = {'recipe': DATA.get(dish)}
+#     return render(request,'calculator/index.html',context)
 
 
 
